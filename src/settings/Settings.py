@@ -28,8 +28,25 @@ import json
 import warnings
 from typing import Any
 
+# Qt libraries
+from PyQt5 import QtCore
+
 # Local libraries
 from src.utils import SingletonMetaClass
+
+
+class SettingsSignal(QtCore.QObject):
+    NameChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
+    VersionChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
+    LanguageChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
+    ComPortChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
+    UnitPressureChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
+    UnitVolumeChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
+    PrecisionPressureChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(int)
+    PrecisionVolumeChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(int)
+
+    def __init__(self):
+        QtCore.QObject.__init__(self)
 
 
 class Settings(metaclass=SingletonMetaClass):
@@ -42,9 +59,20 @@ class Settings(metaclass=SingletonMetaClass):
     Version: str = "Version"
     Language: str = "Language"
     ComPort: str = "COM Port"
-    def __init__(self, user_folder:str=None, name:str=None, version:str=None) -> None:
-        self._user_folder: str = user_folder
 
+    UnitPressure: str = "Unit Pressure"
+    UnitVolume: str = "Unit Volume"
+
+    PrecisionPressure: str = "Precision Pressure"
+    PrecisionVolume: str = "Precision Volume"
+
+    NullString: str = "None"
+    def __init__(self, user_folder:str=None, name:str=None, version:str=None) -> None:
+        # NOTE: signal class (emitted when some relevant property has changed)
+        self.Signal: SettingsSignal = SettingsSignal()
+
+        # NOTE: relevant paths to user folder and configuration file.
+        self._user_folder: str = user_folder
         self._user_file: str = os.path.join(self._user_folder, "configuration.json")
 
         # NOTE: default properties (properties will be initialized from these if not already existing)
@@ -52,7 +80,22 @@ class Settings(metaclass=SingletonMetaClass):
         self._defaults[self.Name] = name
         self._defaults[self.Version] = version
         self._defaults[self.Language] = "English"
-        self._defaults[self.ComPort] = "None"
+        self._defaults[self.ComPort] = self.NullString
+        self._defaults[self.UnitPressure] = "kPa"
+        self._defaults[self.UnitVolume] = "cm<sup>3<\sup>"
+        self._defaults[self.PrecisionPressure] = 2
+        self._defaults[self.PrecisionVolume] = 2
+
+        # NOTE: associated signals
+        self._signals: dict = {}
+        self._signals[self.Name] = self.Signal.NameChanged
+        self._signals[self.Version] = self.Signal.VersionChanged
+        self._signals[self.Language] = self.Signal.LanguageChanged
+        self._signals[self.ComPort] = self.Signal.ComPortChanged
+        self._signals[self.UnitPressure] = self.Signal.UnitPressureChanged
+        self._signals[self.UnitVolume] = self.Signal.UnitVolumeChanged
+        self._signals[self.PrecisionPressure] = self.Signal.PrecisionPressureChanged
+        self._signals[self.PrecisionVolume] = self.Signal.PrecisionVolumeChanged
         
         # NOTE: properties dictionary (the real settings)
         self._properties: dict = {}
@@ -75,6 +118,7 @@ class Settings(metaclass=SingletonMetaClass):
         """
         if param in self.keys():
             self._properties[param] = value
+            self._signals[param].emit(value)
         else:
             warnings.warn("SettingsManager::get : The property <%s> does not seem to exist."%param, UserWarning)
 
