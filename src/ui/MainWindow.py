@@ -34,6 +34,7 @@ from src.language import Language
 from src.unit     import Unit
 from src.utils    import COMUtils
 from src.assets   import Assets
+from .MainDialogs import InfoDialog
 
 
 class HorizontalLine(QtWidgets.QFrame):
@@ -69,16 +70,16 @@ class CalibrationToolbar(QtWidgets.QToolBar):
         self._delete_action = self.addAction(self._assets.get('delete'),"")
         self._delete_action.setToolTip(self._language.get(self._language.DeleteCalibrationCurveTooltip))
 
-        self._edit_action = self.addAction(self._assets.get('delete'),"")
+        self._edit_action = self.addAction(self._assets.get('edit'),"")
         self._edit_action.setToolTip(self._language.get(self._language.EditCalibrationCurveTooltip))
 
         self.addSeparator()
 
         self._import_action = self.addAction(self._assets.get('import'),"")
-        self._import_action.setToolTip(self._language.get(self._language.DeleteCalibrationCurveTooltip))
+        self._import_action.setToolTip(self._language.get(self._language.ImportCalibrationCurveTooltip))
 
         self._export_action = self.addAction(self._assets.get('export'),"")
-        self._export_action.setToolTip(self._language.get(self._language.DeleteCalibrationCurveTooltip))
+        self._export_action.setToolTip(self._language.get(self._language.ExportCalibrationCurveTooltip))
 
 
 class RunWidget(QtWidgets.QWidget):
@@ -301,6 +302,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._file_menu:QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.File))
         self._edit_menu:QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.Edit))
         self._view_menu:QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.View))
+        self._settings_menu: QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.Settings))
+        self._about_menu: QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.About))
 
         self._quit_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("close"), self._language.get(self._language.Quit), self)
         self._quit_action.triggered.connect(self._onExit)
@@ -309,6 +312,48 @@ class MainWindow(QtWidgets.QMainWindow):
         self._file_menu.addAction(self._quit_action)
 
         self._view_menu.addAction(self._dock_runs_widget.toggleViewAction())
+
+        self._units_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("ruler"), self._language.get(self._language.Units), self)
+        self._units_action.triggered.connect(self._onUnits)
+
+        self._preferences_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("gear"), self._language.get(self._language.Preferences), self)
+        self._preferences_action.triggered.connect(self._onPreferences)
+
+        self._settings_menu.addAction(self._units_action)
+        self._settings_menu.addSeparator()
+        self._settings_menu.addAction(self._preferences_action)
+
+        self._information_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("info"), self._language.get(self._language.Information), self)
+        self._information_action.triggered.connect(self._onInformation)
+
+        self._license_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("license"), self._language.get(self._language.License), self)
+        self._license_action.triggered.connect(self._onLicense)
+
+        self._help_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("help"), self._language.get(self._language.Help), self)
+        self._help_action.triggered.connect(self._onHelp)
+
+        self._about_menu.addAction(self._information_action)
+        self._about_menu.addAction(self._license_action)
+        self._about_menu.addSeparator()
+        self._about_menu.addAction(self._help_action)
+
+    def _onUnits(self) -> None:
+        pass
+
+    def _onPreferences(self) -> None:
+        pass
+
+    def _onInformation(self) -> None:
+        info_dialog = InfoDialog(self, self._assets.get("info"), text=self._language.get(self._language.InfoMessage), title=self._language.get(self._language.Information), close_text=self._language.get(self._language.Close))
+        info_dialog.show()
+
+    def _onLicense(self) -> None:
+        info_dialog = InfoDialog(self, self._assets.get("license"), text=self._language.get(self._language.LicenseMessage), title=self._language.get(self._language.License), close_text=self._language.get(self._language.Close))
+        info_dialog.show()
+
+    def _onHelp(self) -> None:
+        info_dialog = InfoDialog(self, self._assets.get("help"), text=self._language.get(self._language.HelpMessage), title=self._language.get(self._language.Help), close_text=self._language.get(self._language.Close))
+        info_dialog.show()
 
     def _onExit(self) -> None:
         self.close()

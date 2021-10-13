@@ -43,6 +43,8 @@ class Language(metaclass=SingletonMetaClass):
     File: str = "File"
     Edit: str = "Edit"
     View: str = "View"
+    Settings: str = "Settings"
+    About: str = "About"
 
     RunManager: str = "Run Manager"
 
@@ -54,13 +56,22 @@ class Language(metaclass=SingletonMetaClass):
     Connect: str = "Connect"
 
     Quit: str = "Quit"
-
+    Units: str = "Units"
+    Preferences: str = "Preferences"
+    Information: str = "Information"
+    License: str = "License"
+    Help: str = "Help"
+    Close: str = "Close"
 
     CreateCalibrationCurveTooltip: str = "Create a new calibration curve."
-    DeleteCalibrationCurveTooltip: str = "Delete a new calibration curve."
-    ImportCalibrationCurveTooltip: str = "Import a new calibration curve."
-    ExportCalibrationCurveTooltip: str = "Export a new calibration curve."
-    EditCalibrationCurveTooltip: str = "Edit a new calibration curve."
+    DeleteCalibrationCurveTooltip: str = "Delete the selected calibration curve."
+    ImportCalibrationCurveTooltip: str = "Import the selected calibration curve."
+    ExportCalibrationCurveTooltip: str = "Export the selected calibration curve."
+    EditCalibrationCurveTooltip: str = "Edit the selected calibration curve."
+
+    InfoMessage: str = "This software is to be used for the management of a Pressure-Volume controller. It was originally created by: Pedro Correia and José Correia."
+    LicenseMessage: str = "This software has been released under the MIT License."
+    HelpMessage: str = "Currently there is no support for this application."
 
     OPTION_PORTUGUESE: str = "Portuguese"
     OPTION_ENGLISH: str = "English"
@@ -79,6 +90,8 @@ class Language(metaclass=SingletonMetaClass):
             self.File: "Ficheiro",
             self.Edit: "Editar",
             self.View: "Ver",
+            self.About: "Acerca de...",
+            self.Settings: "Definições",
             self.RunManager: "Gestor de Cenários",
             self.CalibrationTitle: "Curva de Calibração",
             self.RealTimeTitle: "Dados em Tempo Real",
@@ -87,6 +100,15 @@ class Language(metaclass=SingletonMetaClass):
             self.Validate: "Validar",
             self.Connect: "Conectar",
             self.Quit: "Sair",
+            self.Units: "Unidades",
+            self.Preferences: "Preferências",
+            self.Information: "Informação",
+            self.License: "Licensa",
+            self.Help: "Ajuda",
+            self.Close: "Fechar",
+            self.InfoMessage: "Este programa é para ser utilizado na gestão de operações the controlo de pressão-volume. Foi criado originalmente por: Pedro Correia, José Correia.",
+            self.LicenseMessage: "Este programa é distribuido sobre a licença MIT.",
+            self.HelpMessage: "De momento não está disponível suporte para esta aplicação.",
             self.CreateCalibrationCurveTooltip: "Criar nova curva de calibração.",
             self.DeleteCalibrationCurveTooltip: "Excluir curva de calibração.",
             self.ExportCalibrationCurveTooltip: "Exportar curva de calibração.",
