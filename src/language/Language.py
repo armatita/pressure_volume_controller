@@ -23,6 +23,9 @@ SOFTWARE.
 """
 
 
+# Python libraries
+from typing import List
+
 # Local libraries
 from src.utils import SingletonMetaClass
 from src.settings import Settings
@@ -62,6 +65,13 @@ class Language(metaclass=SingletonMetaClass):
     License: str = "License"
     Help: str = "Help"
     Close: str = "Close"
+    Language: str = "Language"
+
+    Unit: str = "Unit"
+    Precision: str = "Decimals"
+
+    Cancel: str = "Cancel"
+    Apply: str = "Apply"
 
     CreateCalibrationCurveTooltip: str = "Create a new calibration curve."
     DeleteCalibrationCurveTooltip: str = "Delete the selected calibration curve."
@@ -72,6 +82,8 @@ class Language(metaclass=SingletonMetaClass):
     InfoMessage: str = "This software is to be used for the management of a Pressure-Volume controller. It was originally created by: Pedro Correia and José Correia."
     LicenseMessage: str = "This software has been released under the MIT License."
     HelpMessage: str = "Currently there is no support for this application."
+
+    AsteriskRestartNeeded: str = "* You'll need to restart the software for this option to take effect."
 
     OPTION_PORTUGUESE: str = "Portuguese"
     OPTION_ENGLISH: str = "English"
@@ -101,11 +113,16 @@ class Language(metaclass=SingletonMetaClass):
             self.Connect: "Conectar",
             self.Quit: "Sair",
             self.Units: "Unidades",
+            self.Language: "Idioma",
             self.Preferences: "Preferências",
             self.Information: "Informação",
             self.License: "Licensa",
             self.Help: "Ajuda",
             self.Close: "Fechar",
+            self.Unit: "Unidade",
+            self.Precision: "Décimais",
+            self.Cancel: "Cancelar",
+            self.Apply: "Salvar",
             self.InfoMessage: "Este programa é para ser utilizado na gestão de operações the controlo de pressão-volume. Foi criado originalmente por: Pedro Correia, José Correia.",
             self.LicenseMessage: "Este programa é distribuido sobre a licença MIT.",
             self.HelpMessage: "De momento não está disponível suporte para esta aplicação.",
@@ -113,7 +130,8 @@ class Language(metaclass=SingletonMetaClass):
             self.DeleteCalibrationCurveTooltip: "Excluir curva de calibração.",
             self.ExportCalibrationCurveTooltip: "Exportar curva de calibração.",
             self.ImportCalibrationCurveTooltip: "Importar curva de calibração.",
-            self.EditCalibrationCurveTooltip: "Editar curva de calibração."
+            self.EditCalibrationCurveTooltip: "Editar curva de calibração.",
+            self.AsteriskRestartNeeded: "* Necessita relançar o programa para esta opção ficar em efeito."
         }
 
     def get(self, key:str) -> str:
@@ -121,6 +139,9 @@ class Language(metaclass=SingletonMetaClass):
             return key
         elif self._language == self.OPTION_PORTUGUESE:
             return self._pt[key]
+
+    def options(self) -> List[str]:
+        return self.OPTION_ENGLISH, self.OPTION_PORTUGUESE
 
     def _languageChanged(self, language:str) -> None:
         self._language = language

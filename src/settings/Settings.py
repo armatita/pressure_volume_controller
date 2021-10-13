@@ -26,7 +26,7 @@ SOFTWARE.
 import os
 import json
 import warnings
-from typing import Any
+from typing import Any, List, Tuple
 
 # Qt libraries
 from PyQt5 import QtCore
@@ -74,6 +74,8 @@ class Settings(metaclass=SingletonMetaClass):
         # NOTE: relevant paths to user folder and configuration file.
         self._user_folder: str = user_folder
         self._user_file: str = os.path.join(self._user_folder, "configuration.json")
+        self._calibration_folder: str = os.path.join(self._user_folder, "Calibration")
+        self._calibration_extension: str = "csv"
 
         # NOTE: default properties (properties will be initialized from these if not already existing)
         self._defaults: dict = {}
@@ -135,6 +137,8 @@ class Settings(metaclass=SingletonMetaClass):
         """
         Loads all information from file to this manager.
         """
+        if not os.path.exists(self._calibration_folder):
+            os.mkdir(self._calibration_folder)
         if not os.path.exists(self._user_file):
             self._propertyCheck()
             self.save()
@@ -154,6 +158,50 @@ class Settings(metaclass=SingletonMetaClass):
         Returns a list with all available permanent properties.
         """
         return [key for key in self._properties.keys()]
+
+    def calibrationCurves(self) -> List[str]:
+        return self._loadFiles(self._calibration_folder)
+
+    def loadCurve(self, name: str) -> Tuple[list, list]:
+        x = []
+        y = []
+        if name in self.calibrationCurves():
+            with open(os.path.join(self._calibration_folder, name + "." + self._calibration_extension), "r") as fid:
+                lines = fid.readlines()
+                for line in lines:
+                    s = line.split(",")
+                    x.append(float(s[0]))
+                    y.append(float(s[1]))
+        return x, y
+
+    def createCurve(self, name:str) -> None:
+        if name not in self.calibrationCurves():
+            fid = open(os.path.join(self._calibration_folder, name + "." + self._calibration_extension), "w")
+            fid.close()
+
+    def deleteCurve(self, name:str) -> None:
+        if name in self.calibrationCurves():
+            os.remove(os.path.join(self._calibration_folder, name + "." + self._calibration_extension))
+
+    def _loadFiles(self, folder) -> None:
+        files = self._get_all_filepaths(folder, self._calibration_extension)
+        paths = []
+        for fid in files:
+            paths.append(self._get_file_name(fid))
+        return paths
+
+    def _get_file_name(self, path):
+        if not os.path.isdir(path):
+            return os.path.splitext(os.path.basename(path))[0].split(".")[0]
+
+    def _get_all_filepaths(self, root_path, ext):
+        import os
+        all_files = []
+        for root, dirs, files in os.walk(root_path):
+            for filename in files:
+                if filename.lower().endswith(ext):
+                    all_files.append(os.path.join(root, filename))
+        return all_files
 
     def _propertyCheck(self)->None:
         """
