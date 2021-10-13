@@ -34,8 +34,7 @@ from src.language import Language
 from src.unit     import Unit
 from src.utils    import COMUtils
 from src.assets   import Assets
-from .MainDialogs import InfoDialog, UnitsDialog, HorizontalLine, PreferencesDialog
-
+from .MainDialogs import InfoDialog, UnitsDialog, HorizontalLine, PreferencesDialog, EditDialog
 
 
 class CalibrationToolbar(QtWidgets.QToolBar):
@@ -151,6 +150,7 @@ class RunWidget(QtWidgets.QWidget):
         self._calibration_list: QtWidgets.QListWidget = QtWidgets.QListWidget(self)
         self._populateCurveList()
         self._calibration_list.itemSelectionChanged.connect(self._onCurveSelectionChanged)
+        self._calibration_list.itemDoubleClicked.connect(self._onEditCurve)
 
         # NOTE: real time data widgets
         self._realtime_title: QtWidgets.QLabel = QtWidgets.QLabel(self._language.get(self._language.RealTimeTitle), self)
@@ -190,8 +190,11 @@ class RunWidget(QtWidgets.QWidget):
         else:
             self._settings.setProperty(self._settings.ComPort, port)
 
+        self._comport_value.currentTextChanged.connect(self._onComPortChanged)
+
         # NOTE: start button
         self._connect_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self._assets.get("play"), self._language.get(self._language.Connect), self)
+        self._connect_button.clicked.connect(self._onConnect)
 
         # NOTE: layout
         grid_layout: QtWidgets.QGridLayout = QtWidgets.QGridLayout()
@@ -233,6 +236,17 @@ class RunWidget(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
+    def setConnectionButtonState(self, flag:bool) -> None:
+        if not flag:
+            self._connect_button.setIcon(self._assets.get("stop"))
+            self._connect_button.setText(self._language.get(self._language.Disconnect))
+        else:
+            self._connect_button.setIcon(self._assets.get("play"))
+            self._connect_button.setText(self._language.get(self._language.Disconnect))
+
+    def _onConnect(self) -> None:
+        self._observer.Signal.Connect.emit()
+
     def _languageChanged(self) -> None:
         # self._pressure_label.setText(self._language.get(self._language.Pressure) + ":")
         # self._volume_label.setText(self._language.get(self._language.Volume) + ":")
@@ -260,29 +274,35 @@ class RunWidget(QtWidgets.QWidget):
     def _unitVolumeChanged(self, unit_volume:str) -> None:
         self._volume_edit.setText(self._unit.getAsString(self._current_volume, self._unit.UnitVolume))
 
+    def _onComPortChanged(self) -> None:
+        port = self._comport_value.currentText()
+        self._settings.setProperty(self._settings.ComPort, port)
+
     def _populateCurveList(self) -> None:
         self._calibration_list.clear()
         curves = self._settings.calibrationCurves()
         self._calibration_list.addItems(curves)
 
     def _onCreateCurve(self) -> None:
-        name = QtWidgets.QInputDialog.getText(self.parent(), "Curve name", "Provide a name for the new curve.")
+        name = QtWidgets.QInputDialog.getText(self.parent(), self._language.get(self._language.CurveName), self._language.get(self._language.ProvideNameForNewCurve))
         if name != "":
             if name in self._settings.calibrationCurves():
-                QtWidgets.QMessageBox.warning(self.parent(), "Name already exists!", "You need to pick an unique name.")
+                QtWidgets.QMessageBox.warning(self.parent(), self._language.get(self._language.NameAlreadyExists), self._language.get(self._language.YouNeedToPickANewNAme))
             else:
                 self._settings.createCurve(name[0])
                 self._populateCurveList()
 
     def _onDeleteCurve(self) -> None:
-        reply = QtWidgets.QMessageBox.question(self.parent(), "Delete calibration curve", "Are you sure you want to delete the selected calibration curve?")
+        reply = QtWidgets.QMessageBox.question(self.parent(), self._language.get(self._language.DeleteCalibrationCurve), self._language.get(self._language.AreYouSureYouWantToDeleteCurve))
         if reply == QtWidgets.QMessageBox.Yes:
             name = self._curveSelection()
             self._settings.deleteCurve(name[0])
             self._populateCurveList()
 
     def _onEditCurve(self) -> None:
-        pass
+        name = self._curveSelection()
+        edit_dialog = EditDialog(self.parent(), target=name[0], settings=self._settings, language=self._language, unit=self._unit, observer=self._observer, assets=self._assets)
+        edit_dialog.show()
 
     def _onImportCurve(self) -> None:
         pass

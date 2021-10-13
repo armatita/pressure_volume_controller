@@ -57,6 +57,7 @@ class Language(metaclass=SingletonMetaClass):
     ConfigurationTitle: str = "Configuration"
     Validate: str = "Validate"
     Connect: str = "Connect"
+    Disconnect: str = "Disconnect"
 
     Quit: str = "Quit"
     Units: str = "Units"
@@ -73,6 +74,9 @@ class Language(metaclass=SingletonMetaClass):
     Cancel: str = "Cancel"
     Apply: str = "Apply"
 
+    Raw: str = "Raw"
+    Calibrated: str = "Calibrated"
+
     CreateCalibrationCurveTooltip: str = "Create a new calibration curve."
     DeleteCalibrationCurveTooltip: str = "Delete the selected calibration curve."
     ImportCalibrationCurveTooltip: str = "Import the selected calibration curve."
@@ -82,8 +86,18 @@ class Language(metaclass=SingletonMetaClass):
     InfoMessage: str = "This software is to be used for the management of a Pressure-Volume controller. It was originally created by: Pedro Correia and José Correia."
     LicenseMessage: str = "This software has been released under the MIT License."
     HelpMessage: str = "Currently there is no support for this application."
+    EditCurve: str = "Edit calibration curve"
+    UnableToConnect: str = "Unable to connect"
+    UnableToOpenPort: str = "Unable to open port. Make sure you have a connected device."
 
     AsteriskRestartNeeded: str = "* You'll need to restart the software for this option to take effect."
+
+    CurveName: str = "Curve name"
+    ProvideNameForNewCurve: str = "Provide a name for the new curve."
+    NameAlreadyExists: str = "Name already exists!"
+    YouNeedToPickANewNAme: str = "You need to pick an unique name."
+    DeleteCalibrationCurve: str = "Delete calibration curve"
+    AreYouSureYouWantToDeleteCurve: str = "Are you sure you want to delete the selected calibration curve?"
 
     OPTION_PORTUGUESE: str = "Portuguese"
     OPTION_ENGLISH: str = "English"
@@ -111,6 +125,7 @@ class Language(metaclass=SingletonMetaClass):
             self.ConfigurationTitle: "Configuração",
             self.Validate: "Validar",
             self.Connect: "Conectar",
+            self.Disconnect: "Desconectar",
             self.Quit: "Sair",
             self.Units: "Unidades",
             self.Language: "Idioma",
@@ -123,9 +138,20 @@ class Language(metaclass=SingletonMetaClass):
             self.Precision: "Décimais",
             self.Cancel: "Cancelar",
             self.Apply: "Salvar",
+            self.Raw: "Bruto",
+            self.Calibrated: "Calibrado",
+            self.EditCurve: "Editar curva de calibração",
+            self.CurveName: "Nome da curva de calibração",
+            self.ProvideNameForNewCurve: "Dê um nome para a curva de calibração.",
+            self.NameAlreadyExists: "Nome já existe!",
+            self.YouNeedToPickANewNAme: "Precisa de escolher outro nome.",
+            self.DeleteCalibrationCurve: "Excluir curva de calibração",
+            self.AreYouSureYouWantToDeleteCurve: "Tem a certeza que quer excluir curva de calibração?",
             self.InfoMessage: "Este programa é para ser utilizado na gestão de operações the controlo de pressão-volume. Foi criado originalmente por: Pedro Correia, José Correia.",
             self.LicenseMessage: "Este programa é distribuido sobre a licença MIT.",
             self.HelpMessage: "De momento não está disponível suporte para esta aplicação.",
+            self.UnableToConnect: "Impossível de conectar",
+            self.UnableToOpenPort: "Abertura de porta impossível. Certifique-se que tem um aparelho compatível conectado.",
             self.CreateCalibrationCurveTooltip: "Criar nova curva de calibração.",
             self.DeleteCalibrationCurveTooltip: "Excluir curva de calibração.",
             self.ExportCalibrationCurveTooltip: "Exportar curva de calibração.",

@@ -34,6 +34,7 @@ from src.utils import SingletonMetaClass
 
 
 class ObserverSignal(QtCore.QObject):
+    Connect: QtCore.pyqtSignal = QtCore.pyqtSignal()
     ValuePressureChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(float)
 
     def __init__(self):

@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+
+# Python libraries
+from typing import List
+
 # Qt libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -380,3 +384,102 @@ class InfoDialog(QtWidgets.QDialog):
     def _onClose(self) -> None:
         self.close()
 
+
+class NumericDelegate(QtWidgets.QStyledItemDelegate):
+    """
+    SEE: https://stackoverflow.com/questions/63149168/how-to-accept-only-numeric-values-as-input-for-the-qtablewidget-disable-the-al
+    """
+    def createEditor(self, parent, option, index):
+        editor = super(NumericDelegate, self).createEditor(parent, option, index)
+        if isinstance(editor, QtWidgets.QLineEdit):
+            reg_ex = QtCore.QRegExp("[0-9]+.?[0-9]{,2}")
+            validator = QtGui.QRegExpValidator(reg_ex, editor)
+            editor.setValidator(validator)
+        return editor
+
+
+class EditDialog(QtWidgets.QDialog):
+    def __init__(self, parent=None, target:str=None, settings:Settings=None, language:Language=None, unit:Unit=None, observer:Observer=None, assets:Assets=None):
+        QtWidgets.QDialog.__init__(self, parent)
+
+        self._target: str = target
+        self._settings: Settings = settings
+        self._language: Language = language
+        self._unit: Unit = unit
+        self._observer: Observer = observer
+        self._assets: Assets = assets
+
+        self._data: List[list, list] = self._settings.loadCurve(self._target)
+
+        self.setWindowTitle(self._language.get(self._language.EditCurve))
+
+        self._base_table: QtWidgets.QTableWidget = QtWidgets.QTableWidget(len(self._data[0]), 2, self)
+        delegate = NumericDelegate(self._base_table)
+        self._base_table.setItemDelegate(delegate)
+        self._base_table.setHorizontalHeaderLabels([self._language.get(self._language.Raw), self._language.get(self._language.Calibrated)])
+        self._base_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        counter: int = 0
+        for x, y in zip(self._data[0], self._data[1]):
+            xitem = QtWidgets.QTableWidgetItem(str(x))
+            xitem.setTextAlignment(QtCore.Qt.AlignCenter)
+            yitem = QtWidgets.QTableWidgetItem(str(y))
+            yitem.setTextAlignment(QtCore.Qt.AlignCenter)
+            self._base_table.setItem(counter, 0, xitem)
+            self._base_table.setItem(counter, 1, yitem)
+            counter += 1
+
+        self._toolbar: QtWidgets.QToolBar = QtWidgets.QToolBar(self)
+        self._add_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("plus"), "")
+        self._add_action.triggered.connect(self._addAction)
+        self._delete_action: QtWidgets.QAction = QtWidgets.QAction(self._assets.get("delete"), "")
+        self._delete_action.triggered.connect(self._deleteAction)
+        self._toolbar.addAction(self._add_action)
+        self._toolbar.addAction(self._delete_action)
+
+
+        self._cancel_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self._language.get(self._language.Cancel), self)
+        self._cancel_button.clicked.connect(self._onClose)
+        self._apply_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self._language.get(self._language.Apply), self)
+        self._apply_button.clicked.connect(self._onApply)
+
+        layout_bottom: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
+        layout_bottom.addStretch()
+        layout_bottom.addWidget(self._apply_button)
+        layout_bottom.addWidget(self._cancel_button)
+
+        layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self._toolbar)
+        layout.addWidget(self._base_table)
+        layout.addLayout(layout_bottom)
+
+        self.setLayout(layout)
+
+    def _addAction(self) -> None:
+        count = self._base_table.rowCount()
+        self._base_table.insertRow(count)
+        if count > 0:
+            xitem = QtWidgets.QTableWidgetItem(self._base_table.item(count - 1, 0))
+            yitem = QtWidgets.QTableWidgetItem(self._base_table.item(count - 1, 1))
+        else:
+            xitem = QtWidgets.QTableWidgetItem(str(0.0))
+            yitem = QtWidgets.QTableWidgetItem(str(0.0))
+        self._base_table.setItem(count, 0, xitem)
+        self._base_table.setItem(count, 1, yitem)
+
+    def _deleteAction(self) -> None:
+        count = self._base_table.rowCount()
+        if count > 0:
+            self._base_table.removeRow(count - 1)
+
+    def _onClose(self) -> None:
+        self.close()
+
+    def _onApply(self) -> None:
+        x, y = [], []
+        for i in range(self._base_table.rowCount()):
+            x.append(float(self._base_table.item(i, 0).text()))
+            y.append(float(self._base_table.item(i, 1).text()))
+        if len(x) > 0:
+            data = [x, y]
+            self._settings.saveCurve(self._target, data)
+        self._onClose()

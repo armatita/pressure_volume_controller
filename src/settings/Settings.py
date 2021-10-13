@@ -169,10 +169,15 @@ class Settings(metaclass=SingletonMetaClass):
             with open(os.path.join(self._calibration_folder, name + "." + self._calibration_extension), "r") as fid:
                 lines = fid.readlines()
                 for line in lines:
-                    s = line.split(",")
+                    s = line.split(";")
                     x.append(float(s[0]))
                     y.append(float(s[1]))
         return x, y
+
+    def saveCurve(self, name:str, data:Tuple[list, list]) -> None:
+        with open(os.path.join(self._calibration_folder, name + "." + self._calibration_extension), "w") as fid:
+            for x, y in zip(data[0], data[1]):
+                fid.write(f"{x};{y}\n")
 
     def createCurve(self, name:str) -> None:
         if name not in self.calibrationCurves():

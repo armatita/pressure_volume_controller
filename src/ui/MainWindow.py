@@ -24,6 +24,8 @@ SOFTWARE.
 
 # Python libraries
 import time
+import serial
+from threading import Thread, Event
 
 # Qt libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -86,6 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # NOTE: the observer class warns when a real time value has changed
         self._observer: Observer = Observer()
+        self._observer.Signal.Connect.connect(self._onConnection)
 
         # NOTE: assets object
         self._assets: Assets = Assets()
@@ -101,11 +104,63 @@ class MainWindow(QtWidgets.QMainWindow):
         self._central_widget: CentralWidget = CentralWidget(self)
         self.setCentralWidget(self._central_widget)
 
+        self._serial: serial.Serial = None
+        self._connection_thread: Thread = None
+        self._connection_thread_event: Event = None
+        self._connection_thread_flag: bool = False
+        self._connection_flag: bool = False
+
         # NOTE: building menu.
         self._buildMenuBar()
 
         # NOTE: Maximizing on startup
         self.showMaximized()
+
+    def _onConnection(self) -> None:
+        if not self._connection_thread_flag:
+            try:
+                port = self._settings.getProperty(self._settings.ComPort)
+                self._serial: serial.Serial = serial.Serial(port, 9600)
+                self._thread_flag: bool = True
+                self._connection_thread = Thread(target=self._onReadPressureThread)
+                self._connection_thread.start()
+                self._connection_thread_flag = True
+                self._dock_runs_widget.widget().setConnectionButtonState(False)
+            except OSError as err:
+                self._dock_runs_widget.widget().setConnectionButtonState(True)
+                QtWidgets.QMessageBox.warning(self, self._language.get(self._language.UnableToConnect), self._language.get(self._language.UnableToOpenPort))
+        else:
+            self._connection_thread_flag = False
+            self._connection_thread_event.set()
+            self._connection_thread.join()
+            self._connection_thread_flag = False
+            self._dock_runs_widget.widget().setConnectionButtonState(True)
+
+    def _onReadPressureThread(self) -> None:
+        while self._connection_thread_flag:
+            value = self._serial.readline()
+            try:
+                val = str(value).replace("\\r","").replace("\\n","").replace("''","").replace("b","").replace("'","").replace("'","")
+                if val == "IC_H":
+                    pass
+                    # self.label_9.setText("Atingiu o início do curso")
+                elif val == "FC_H":
+                    pass
+                    # self.label_9.setText("Atingiu o fim do curso")
+                elif val == "FC_L":
+                    pass
+                elif val == "IC_L":
+                    pass
+                else:
+                    self._observer.Signal.ValuePressureChanged.emit(float(val))
+                    # if self._p is not None:
+                    #     self._observer.Signal.ValuePressureChanged.emit(float(val)) #self._p(float(val))
+                    # else:
+                    #     self.Pressao.setText(val)
+            except ValueError as error:
+                print(error)
+            self._connection_thread_event.wait(0.2)
+
 
     def _buildMenuBar(self):
         self._file_menu:QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.File))
