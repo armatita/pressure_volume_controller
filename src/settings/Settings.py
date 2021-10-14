@@ -174,6 +174,17 @@ class Settings(metaclass=SingletonMetaClass):
                     y.append(float(s[1]))
         return x, y
 
+    def loadCurveFromPath(self, path: str) -> Tuple[list, list]:
+        x = []
+        y = []
+        with open(path, "r") as fid:
+            lines = fid.readlines()
+            for line in lines:
+                s = line.split(";")
+                x.append(float(s[0]))
+                y.append(float(s[1]))
+        return x, y
+
     def saveCurve(self, name:str, data:Tuple[list, list]) -> None:
         with open(os.path.join(self._calibration_folder, name + "." + self._calibration_extension), "w") as fid:
             for x, y in zip(data[0], data[1]):

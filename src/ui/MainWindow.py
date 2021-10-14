@@ -122,6 +122,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 port = self._settings.getProperty(self._settings.ComPort)
                 self._serial: serial.Serial = serial.Serial(port, 9600)
                 self._thread_flag: bool = True
+                self._connection_thread_event = Event()
                 self._connection_thread = Thread(target=self._onReadPressureThread)
                 self._connection_thread.start()
                 self._connection_thread_flag = True

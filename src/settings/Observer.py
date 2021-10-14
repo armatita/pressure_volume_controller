@@ -36,7 +36,10 @@ from src.utils import SingletonMetaClass
 class ObserverSignal(QtCore.QObject):
     Connect: QtCore.pyqtSignal = QtCore.pyqtSignal()
     ValuePressureChanged: QtCore.pyqtSignal = QtCore.pyqtSignal(float)
-
+    NewTargetPressure: QtCore.pyqtSignal = QtCore.pyqtSignal(float)
+    EmptyTank: QtCore.pyqtSignal = QtCore.pyqtSignal()
+    FillTank: QtCore.pyqtSignal = QtCore.pyqtSignal()
+    SendInfo: QtCore.pyqtSignal = QtCore.pyqtSignal(str)
     def __init__(self):
         QtCore.QObject.__init__(self)
 

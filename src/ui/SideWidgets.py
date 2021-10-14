@@ -239,7 +239,7 @@ class RunWidget(QtWidgets.QWidget):
     def setConnectionButtonState(self, flag:bool) -> None:
         if not flag:
             self._connect_button.setIcon(self._assets.get("stop"))
-            self._connect_button.setText(self._language.get(self._language.Disconnect))
+            self._connect_button.setText(self._language.get(self._language.Connect))
         else:
             self._connect_button.setIcon(self._assets.get("play"))
             self._connect_button.setText(self._language.get(self._language.Disconnect))

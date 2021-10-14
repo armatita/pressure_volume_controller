@@ -76,6 +76,10 @@ class Language(metaclass=SingletonMetaClass):
 
     Raw: str = "Raw"
     Calibrated: str = "Calibrated"
+    Import: str = "Import"
+
+    EmptyTank: str = "Empty Tank"
+    FillTank: str = "Fill Tank"
 
     CreateCalibrationCurveTooltip: str = "Create a new calibration curve."
     DeleteCalibrationCurveTooltip: str = "Delete the selected calibration curve."
@@ -98,10 +102,21 @@ class Language(metaclass=SingletonMetaClass):
     YouNeedToPickANewNAme: str = "You need to pick an unique name."
     DeleteCalibrationCurve: str = "Delete calibration curve"
     AreYouSureYouWantToDeleteCurve: str = "Are you sure you want to delete the selected calibration curve?"
+    AreYouSureYouWishToExit: str = 'Are you sure you want to quit?'
+
+    EmptyingTank: str = "Emptying Tank"
+    Fillingank: str = "Filling Tank"
+    NoConnection: str = "No Connection"
+    YouMustOpenAConnection: str = "You must open a connection first."
+
+    FileProblem: str = "Problem with File"
+    UnableToOpenFile: str = "Unable to open File. Please check the format."
+    ReachedBeginning: str = "Reached beginning for course."
+    ReachedEnd: str = "Reached end for course."
 
     OPTION_PORTUGUESE: str = "Portuguese"
     OPTION_ENGLISH: str = "English"
-    def __init__(self, settings:str) -> None:
+    def __init__(self, settings: Settings) -> None:
         self._settings: Settings = settings
         self._settings.Signal.LanguageChanged.connect(self._languageChanged)
 
@@ -140,6 +155,15 @@ class Language(metaclass=SingletonMetaClass):
             self.Apply: "Salvar",
             self.Raw: "Bruto",
             self.Calibrated: "Calibrado",
+            self.Import: "Importar",
+            self.EmptyTank: "Esvaziar Tanque",
+            self.FillTank: "Encher Tanque",
+            self.EmptyingTank: "A esvaziar tanque.",
+            self.Fillingank: "A encher tanque.",
+            self.NoConnection: "Sem conexão",
+            self.YouMustOpenAConnection: "Tem de abrir uma conexão primeiro.",
+            self.FileProblem: "Problema com ficheiro",
+            self.UnableToOpenFile: "Não foi possível abrir o ficheiro. Verifique a formatação.",
             self.EditCurve: "Editar curva de calibração",
             self.CurveName: "Nome da curva de calibração",
             self.ProvideNameForNewCurve: "Dê um nome para a curva de calibração.",
@@ -147,11 +171,14 @@ class Language(metaclass=SingletonMetaClass):
             self.YouNeedToPickANewNAme: "Precisa de escolher outro nome.",
             self.DeleteCalibrationCurve: "Excluir curva de calibração",
             self.AreYouSureYouWantToDeleteCurve: "Tem a certeza que quer excluir curva de calibração?",
+            self.AreYouSureYouWishToExit: 'Tem a certeza que quer sair?',
             self.InfoMessage: "Este programa é para ser utilizado na gestão de operações the controlo de pressão-volume. Foi criado originalmente por: Pedro Correia, José Correia.",
             self.LicenseMessage: "Este programa é distribuido sobre a licença MIT.",
             self.HelpMessage: "De momento não está disponível suporte para esta aplicação.",
             self.UnableToConnect: "Impossível de conectar",
             self.UnableToOpenPort: "Abertura de porta impossível. Certifique-se que tem um aparelho compatível conectado.",
+            self.ReachedBeginning: "Chegou ao ínicio do percurso.",
+            self.ReachedEnd: "Chegou ao fim do percurso.",
             self.CreateCalibrationCurveTooltip: "Criar nova curva de calibração.",
             self.DeleteCalibrationCurveTooltip: "Excluir curva de calibração.",
             self.ExportCalibrationCurveTooltip: "Exportar curva de calibração.",
