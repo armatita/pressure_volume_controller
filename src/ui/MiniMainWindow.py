@@ -71,7 +71,7 @@ class CentralWidget(QtWidgets.QWidget):
         self._pressure_label.setFont(BIG_FONT)
 
         self._pressure_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit("0.0 kPa", self)
-        # self._pressure_edit.setReadOnly(True)
+        self._pressure_edit.setReadOnly(True)
         self._pressure_edit.setFont(BIG_FONT)
 
         self._info_label: QtWidgets.QLabel = QtWidgets.QLabel("...", self)
