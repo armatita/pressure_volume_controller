@@ -286,6 +286,9 @@ class MiniMainWindow(QtWidgets.QMainWindow):
         self.showMaximized()
 
     def _buildMenuBar(self):
+        """
+        Adding the top menu to this application.
+        """
         self._file_menu:QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.File))
         self._settings_menu: QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.Settings))
         self._about_menu: QtWidgets.QMenu = self.menuBar().addMenu(self._language.get(self._language.About))
