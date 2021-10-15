@@ -105,7 +105,7 @@ class Language(metaclass=SingletonMetaClass):
     AreYouSureYouWishToExit: str = 'Are you sure you want to quit?'
 
     EmptyingTank: str = "Emptying Tank"
-    Fillingank: str = "Filling Tank"
+    FillinTank: str = "Filling Tank"
     NoConnection: str = "No Connection"
     YouMustOpenAConnection: str = "You must open a connection first."
 
@@ -159,7 +159,7 @@ class Language(metaclass=SingletonMetaClass):
             self.EmptyTank: "Esvaziar Tanque",
             self.FillTank: "Encher Tanque",
             self.EmptyingTank: "A esvaziar tanque.",
-            self.Fillingank: "A encher tanque.",
+            self.FillinTank: "A encher tanque.",
             self.NoConnection: "Sem conexão",
             self.YouMustOpenAConnection: "Tem de abrir uma conexão primeiro.",
             self.FileProblem: "Problema com ficheiro",

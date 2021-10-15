@@ -109,6 +109,8 @@ class JanelaCalibracao(QtWidgets.QDialog):
 
 class Arduino(QtWidgets.QWidget):
     def __init__(self):
+       import os
+       os.chdir(os.path.dirname(__file__))
        QtWidgets.QWidget.__init__(self, parent=None)
        uic.loadUi('arduino_20-5-2021.ui', self)  # Load the arduino_20-5-2021.ui file 
        
@@ -159,7 +161,7 @@ class Arduino(QtWidgets.QWidget):
     def PressaoSetup(self):
         value = self.SetPressao.value()
         self._serial.write(str(value).encode())
-        print("Value sent: ", str(value))
+        print("Value sent: ", str(value), str(value).encode())
         pass
         
     def LePressao(self):

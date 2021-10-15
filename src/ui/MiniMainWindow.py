@@ -47,8 +47,8 @@ MEDIUM_FONT: QtGui.QFont = QtGui.QFont()
 MEDIUM_FONT.setPointSize(24)
 MEDIUM_FONT.setBold(True)
 
-BIG_SIZE: int = 128
-MEDIUM_SIZE: int = 64
+BIG_SIZE: int = 64
+MEDIUM_SIZE: int = 32
 
 CALIBRATION_FILENAME: str = "Calibration"
 
@@ -71,7 +71,7 @@ class CentralWidget(QtWidgets.QWidget):
         self._pressure_label.setFont(BIG_FONT)
 
         self._pressure_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit("0.0 kPa", self)
-        self._pressure_edit.setReadOnly(True)
+        # self._pressure_edit.setReadOnly(True)
         self._pressure_edit.setFont(BIG_FONT)
 
         self._info_label: QtWidgets.QLabel = QtWidgets.QLabel("...", self)
@@ -225,7 +225,7 @@ class CentralWidget(QtWidgets.QWidget):
         self._comport_description.setText("-> " + COMUtils.getDescription(self._comport_value.currentText()))
 
     def _onPressureChange(self, pressure:float) -> None:
-        self._pressure_edit.setText(f"{0:.2f} kPa".format(pressure))
+        self._pressure_edit.setText("{:.2f} kPa".format(pressure))
 
     def setConnectionButtonState(self, flag:bool) -> None:
         if not flag:
@@ -349,7 +349,7 @@ class MiniMainWindow(QtWidgets.QMainWindow):
 
     def _onNewTargetPressure(self, value:float) -> None:
         if self._serial is not None:
-            self._serial.write(str(value).encode())
+            self._serial.write(str(int(value)).encode())
             print("MiniMainWindow::_onNewTargetPressure : new target pressure ->", str(value))
 
     def _onExit(self) -> None:
@@ -381,17 +381,18 @@ class MiniMainWindow(QtWidgets.QMainWindow):
                 self._connection_thread = Thread(target=self._onReadPressureThread)
                 self._connection_thread.start()
                 self._connection_thread_flag = True
-                self._central_widget.widget().setConnectionButtonState(True)
+                self._central_widget.setConnectionButtonState(True)
             except OSError as err:
                 self._central_widget.setConnectionButtonState(False)
                 QtWidgets.QMessageBox.warning(self, self._language.get(self._language.UnableToConnect), self._language.get(self._language.UnableToOpenPort))
         else:
+            self._serial.close()
             self._serial = None
             self._connection_thread_flag = False
             self._connection_thread_event.set()
             self._connection_thread.join()
             self._connection_thread_flag = False
-            self._central_widget.widget().setConnectionButtonState(True)
+            self._central_widget.setConnectionButtonState(False)
 
     def _onReadPressureThread(self) -> None:
         while self._connection_thread_flag:
@@ -411,6 +412,7 @@ class MiniMainWindow(QtWidgets.QMainWindow):
                         self._observer.Signal.ValuePressureChanged.emit(self._p(float(val)))
                     else:
                         self._observer.Signal.ValuePressureChanged.emit(float(val))
+                        print(2)
             except ValueError as error:
                 print(error)
             self._connection_thread_event.wait(0.2)
